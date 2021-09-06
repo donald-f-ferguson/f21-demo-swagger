@@ -1,0 +1,353 @@
+openapi: 3.0.0
+info:
+  title: Simple User and Address API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: http://0.0.0.0:8080/donff2/F21User/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: administrators
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /users:
+    get:
+      tags:
+      - developers
+      summary: "Resource for creating, reading, updating, etc. users."
+      description: "By passing in the appropriate options, you can search for\nand\
+        \ retrieve information about users. \n"
+      operationId: get_users
+      parameters:
+      - name: searchString
+        in: query
+        description: Optional query string in standard format.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/User'
+                x-content-type: application/json
+        "400":
+          description: bad input parameter
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+    post:
+      tags:
+      - developers
+      summary: creates a user
+      description: Obvious
+      operationId: add_user
+      requestBody:
+        description: "User to add, except for ID. Application set ID."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "201":
+          description: item created
+        "400":
+          description: "invalid input, object invalid"
+        "409":
+          description: Duplicate email
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+  /users/{userId}:
+    get:
+      tags:
+      - developers
+      summary: Gets a user by ID
+      description: Gets a user.
+      operationId: get_user
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user to get.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: User identified by the ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Something bad happened.
+        "404":
+          description: Not found.
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+    put:
+      tags:
+      - developers
+      summary: Updates a user
+      description: Updates a user. Cannot change ID.
+      operationId: update_user
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user to update.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: "User to update, except for ID. Application set ID."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: User updated
+        "400":
+          description: Something bad happened.
+        "404":
+          description: Not found.
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+    delete:
+      tags:
+      - developers
+      summary: Deletes a user by ID
+      description: Deletes a user.
+      operationId: delete_user
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user to delete.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successfully deleted.
+        "400":
+          description: Something bad happened.
+        "404":
+          description: Not found.
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+  /users/{userId}/address:
+    get:
+      tags:
+      - developers
+      summary: Gets a user's address.
+      description: Obvious
+      operationId: get_user_address
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose address to get.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: User identified by the ID
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+                x-content-type: application/json
+        "400":
+          description: Something bad happened.
+        "404":
+          description: Not found.
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+    put:
+      tags:
+      - developers
+      summary: Updates a user's address
+      description: Obvious.
+      operationId: update_user_address
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose address to update.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: "User to update, except for ID. Application set ID."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: Address updated.
+        "400":
+          description: Something bad happened.
+        "404":
+          description: Not found.
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+    post:
+      tags:
+      - developers
+      summary: Creates the address for the user.
+      description: Obvious
+      operationId: create_user_address
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user to update.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Address information.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        "201":
+          description: Address created.
+        "400":
+          description: Something bad happened.
+        "404":
+          description: Not found.
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+    delete:
+      tags:
+      - developers
+      summary: Deletes a user's address
+      description: Obvious
+      operationId: delete_user_address
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user to delete.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successfully deleted.
+        "400":
+          description: Something bad happened.
+        "404":
+          description: Not found.
+      x-openapi-router-controller: swagger_server.controllers.developers_controller
+components:
+  schemas:
+    User:
+      required:
+      - createdDate
+      - email
+      - id
+      - nameFirst
+      - nameLast
+      type: object
+      properties:
+        id:
+          type: string
+          example: Will be something like a UNI.
+        email:
+          type: string
+          format: email
+          example: cool.dude@contonoso.org
+        nameLast:
+          type: string
+          example: Smith
+        nameFirst:
+          type: string
+          example: John
+        createdDate:
+          type: string
+          format: date-time
+          example: 2016-08-29T09:12:33.001Z
+        links:
+          $ref: '#/components/schemas/Links'
+      example:
+        nameLast: Smith
+        nameFirst: John
+        createdData: 2016-08-29T09:12:33.001Z
+        links:
+        - rel: some_relationship
+          href: /some/url
+        - rel: some_relationship
+          href: /some/url
+        id: Will be something like a UNI.
+        email: cool.dude@contonoso.org
+    Address:
+      required:
+      - cityName
+      - postalCode
+      - regionName
+      - streetName1
+      - streetName2
+      - streetNumber
+      properties:
+        streetNumber:
+          type: string
+          example: "123"
+        streetName1:
+          type: string
+          example: Baker St.
+        streetName2:
+          type: string
+          example: Apt. 2C
+        cityName:
+          type: string
+          example: Podunk
+        regionName:
+          type: string
+          example: East Nowhere
+        postalCode:
+          type: string
+          example: "10027"
+        countryName:
+          type: string
+          example: United States of America
+    Link:
+      required:
+      - href
+      - rel
+      type: object
+      properties:
+        rel:
+          type: string
+          example: some_relationship
+        href:
+          type: string
+          format: url
+          example: /some/url
+      example:
+        rel: some_relationship
+        href: /some/url
+    Links:
+      type: array
+      items:
+        $ref: '#/components/schemas/Link'
+
